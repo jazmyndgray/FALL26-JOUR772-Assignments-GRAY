@@ -97,7 +97,7 @@ umd_courses <- read_rds("umd_courses.rds")
 
 Once it loads, look at the environment window at right in RStudio for umd_courses It's next to a small blue circle with a white arrow in it. To the right of that, look at how many "obs" the dataset has ("obs" is short for observation, which is another way of saying rows or records). Look at how many variables it has (another way of saying columns or fields). Write the number of observations and variables below.
 
-**Answer 79,366 observations & 9 variables**
+**Answer: 79,366 observations & 9 variables**
 
 ### Task 6: Glimpse data
 
@@ -109,7 +109,7 @@ glimpse(umd_courses)
 
 In the space below, write the data type for the "id" column and the "seats" column (it's in light gray, offset by \< \>).
 
-**Answer id = chr & seats = dbl**
+**Answer: id = chr (letters) & seats = dbl (numbers ONLY)**
 
 ### Task 7: Examine data "head"
 
@@ -121,7 +121,7 @@ head(umd_courses)
 
 In the space below, write the name of the course from the first row of the "name" column.
 
-**Answer** LING889: Directed Research
+**Answer:** **LING889: Directed Research**
 
 ### Task 8: Explore data with interactive dataframe
 
@@ -145,7 +145,7 @@ umd_courses |>
 
 Describe what you think each line of this code is doing below, based on the result:
 
-**Answer: Look at the UMD dataset. Then, take take a look at the "term column." From there, you can summarize the number of classes per term. Label that column "count_classes."**
+**Answer: Look at the UMD dataset. Then, take take a look at the "term" column. From there, you can summarize the number of rows, or classes, per term. Label that column "count_classes."**
 
 ### Task 10: Adding arrange to sort the data
 
@@ -162,7 +162,7 @@ umd_courses |>
 
 Compared to the previous codeblock, what has changed and how did that affect the result?
 
-**Answer: Arranged in descending order.**
+**Answer: The new arrange code rearranged the rows. Now, they are arranged in descending order, from highest class count per term to least.**
 
 ### Task 11: Grouping by multiple columns
 
@@ -179,7 +179,7 @@ umd_courses |>
 
 Compared to the previous codeblock, how did the output change and what in the code changed it?
 
-**Answer**
+**Answer: Adding the group_by "department" code added a new column. Class count is now grouped by department per term.**
 
 ### Task 12: Other summary functions
 
@@ -195,7 +195,9 @@ umd_courses |>
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result?
+
+**Answer: We added another summary column. Now, number of classes and available seats are shown per term in descending order.**
 
 ### Task 13: different kinds of summarizations
 
@@ -213,7 +215,9 @@ umd_courses |>
   arrange(desc(total_seats))
 ```
 
-Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common? **Answer**
+Compared to the previous codeblock, what has changed and how did that affect the result? What do the top terms have in common?
+
+**Answer: It demonstrated the median and average number of seats per class. The top terms have a similar average around 47 seats per class. The median is lower, indicating there are likely a few outliers significantly impacting the average.**
 
 ### Task 14: more aggregations
 
@@ -235,7 +239,7 @@ umd_courses |>
 
 Compared to the previous codeblock, what has changed and how did that affect the result? How is the data sorted?
 
-**Answer**
+**Answer: Data is now grouped by department and arranged from greatest total number of seats to least. This seems to have been accomplished removing the "term" and using the new "department" group_by code.**
 
 ### Task 12: Questions
 
@@ -243,8 +247,8 @@ No code here; I want you to provide three questions that this data suggests to y
 
 **Answer**
 
-1.  
+1.  Which department teaches the greatest number of courses each semester, on average, including individual sections?
 
-2.  
+2.  What is an instructor's average courseload in a semester?
 
-3.  
+3.  Which instructors have taught the most students over time? Courses?
