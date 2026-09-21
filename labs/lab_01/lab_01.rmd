@@ -79,7 +79,9 @@ umd_courses |>
   arrange(desc(count_classes))
 ```
 
-**Q4** Given the results for Q3, what would have made it easier to find the answer? You don't have to know *how* to accomplish this; I want you to describe in words what would make the answer easier to see. How confident are you that the answer you got is the right one, and why? I would have loved to remove the N/As. it was challenging to click through extra, irrelevant pages.
+**Q4** Given the results for Q3, what would have made it easier to find the answer? You don't have to know *how* to accomplish this; I want you to describe in words what would make the answer easier to see. How confident are you that the answer you got is the right one, and why?
+
+I would have loved to remove the N/As. It was challenging to click through extra, irrelevant pages. I would say that I'm only confident in answering "Keith" after talking to my classmates. Had I been working alone, I would have worried that I was missing something amidst all of the N/As.
 
 **Q5** Take one of the questions you listed in the final question of the pre_lab and try to answer it here in code. If you don't know how to fully answer it, write what code you can and describe in words what else you would need to do. If you got an answer, is it interesting? **A5**
 
