@@ -281,7 +281,7 @@ general_22 <- general_22 |>
 
 How did the answer change from the previous task, and why?
 
-**Answer: The column should be displayed as percentages since decimals were multiplied by 100. Answers should also be arranged from greatest to least.**
+**Answer: The column should be displayed as percentages since decimals were multiplied by 100. Answers should also be arranged from greatest to least, I think, but I'm not sure because it didn't load.**
 
 ### Task 13: Mutate with ordering, part 2
 
@@ -290,7 +290,7 @@ How did the answer change from the previous task, and why?
 ```{r}
 # better ordering ?
 
-# woah—this worked. why?
+# woah—this loaded why?
 
 general_22 |>
   arrange(pct_moore)
@@ -298,7 +298,7 @@ general_22 |>
 
 Is this a more interesting or useful answer? Why?
 
-**Answer: Oh interesting, it looks like it's now arranged from least to most.**
+**Answer: Oh interesting, it looks like it's now arranged from least to most. This is useful for finding the story.**
 
 ### Task 14: Standardize existing data using mutate
 
