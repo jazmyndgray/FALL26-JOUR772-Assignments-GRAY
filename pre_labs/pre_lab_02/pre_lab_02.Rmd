@@ -229,7 +229,7 @@ First, we'll import a dataset of county-level gubernatorial results from Marylan
 ```{r}
 general_22 <- read_csv('data/md_gov_county.csv')
 
-summary(general_22)
+# summary(general_22)
 
 # how do I get it to load the whole thing? please send help. I can't get the spec to work
 ```
