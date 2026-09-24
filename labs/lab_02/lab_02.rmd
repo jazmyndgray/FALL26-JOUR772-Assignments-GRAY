@@ -34,7 +34,7 @@ maryland_expenses <- read_csv("data/maryland_expenses.csv")
 
 **Q1.** How many departments have offered the courses with "Climate" in the title and at least one seat? Which department has offered the most?
 
-**A1. 305 departments offered courses with climate in the title. Atmospheric & Oceanic Science offered tge msot. .**
+**A1. 305 departments offered courses with "Climate" in the title. The Atmospheric & Oceanic Science department offered the most. .**
 
 ```{r}
 
@@ -53,11 +53,11 @@ group_by(department) |>
 
 **Q2.** Of the departments listed in A1, which one is the most interesting to you, and why?
 
-**A2.The honors options are interesting because I wouldn't automatically associate that with climate science.**
+**A2.The Honors department options are interesting because I wouldn't automatically associate that with climate science.**
 
 **Q3** Which departments offered the most courses in the Fall 2024 term? And which departments in that term have at least one syllabus posted? Answer both of those questions and then compare the top five departments - how are they different?
 
-**A3. Business & Management had the most courses in fall 2024, with 174 classes. They also had the most classes with syllabuses at 106. The top courses shift a bit one we consider the syllabus counts—the numbers drastically drop and many humanities courses fall out of the top 5 amounts.**
+**A3. Business & Management had the most courses in fall 2024, with 174 classes. They also had the most classes with syllabuses at 106. The top courses shift a bit once we consider the syllabus counts—the numbers drastically drop and many of the humanities, specifically, fall out of the top 5 course counts.**
 
 ```{r}
 
@@ -84,29 +84,71 @@ fall_2024_departments |>
  arrange(desc(class_count))
 ```
 
-**Q4.** Using the Maryland campaign expenses data, change the datatype of the expenditure_date column so that it is a date and not a chr, saving the result as a new dataframe. Then create a new column for the month based on expenditure_date. Then write code that shows total amount spent each month by Wes Moore's committee (you'll need to search the data to find the exact name, and we're not looking in payee_name). Write a sentence describing the pattern of spending over time. **A4.**
+**Q4.** Using the Maryland campaign expenses data, change the datatype of the expenditure_date column so that it is a date and not a chr, saving the result as a new dataframe. Then create a new column for the month based on expenditure_date. Then write code that shows total amount spent each month by Wes Moore's committee (you'll need to search the data to find the exact name, and we're not looking in payee_name). Write a sentence describing the pattern of spending over time. **A4. Spending increased closer to the election, with the greatest amount of funds spent by Moore's committee in October 2022.**
+
+```{r}
+maryland_expenses <- read_csv("data/maryland_expenses.csv")
+
+head(maryland_expenses)
+
+# note that this code chunk HAS to run first
+```
+
+```{r}
+maryland_expenses <- maryland_expenses |> mutate(expenditure_date=mdy(expenditure_date))
+
+head(maryland_expenses)
+
+```
 
 ```{r}
 
-moore_payments<- maryland_expenses |> filter (str_detect(committee_name, "Moore")) 
+moore_payments<- maryland_expenses |> filter (str_detect(committee_name,"Moore")) |> filter (str_detect(committee_name, "Wes"))
 
 moore_payments |>
   mutate(month = floor_date(expenditure_date, "month")) |>
   group_by(month) |>
-  summarise(
-    total_amount = n()
-  ) |>
+  summarise(total_amount = sum(amount)) |>
   arrange(desc(total_amount))
 
-
 ```
 
-**Q5.** Using case_when(), create a column in the Maryland expenses data called `spending_location` indicating whether each record spent money in Maryland or outside Maryland. For records that are in Maryland, make the new column's value "In-state" and for all others, make it "Out of state". Then write code that shows the total amount of money spent in each category and describe the results. You can do this in one statement or break it up into two statements (saving the new column to your dataframe). **A5**
+**Q5.** Using case_when(), create a column in the Maryland expenses data called `spending_location` indicating whether each record spent money in Maryland or outside Maryland. For records that are in Maryland, make the new column's value "In-state" and for all others, make it "Out of state". Then write code that shows the total amount of money spent in each category and describe the results. You can do this in one statement or break it up into two statements (saving the new column to your dataframe). **A5 This was tricky because the out-of-state spending returned NAs for the total. I looked up how to omit those empty responses and received an answer. Hopefully I did that right.**
 
 ```{r}
+maryland_expenses_spending_location <-maryland_expenses |>
+  mutate(
+    spending_location = case_when(
+      str_detect(address, " Maryland ") ~ "In-state",
+      str_detect(address, " Maryland ", negate = TRUE) ~ "Out of state",
+      .default = NA
+    )
+  )
 ```
 
-**Q6.** Choose your own adventure: using either the UMD courses or campaign expenses data, ask and answer a question that is different than the previous ones. You can use one of the ones you provided in the pre_lab. **A6.**
+```{r}
+maryland_expenses_spending_location |>
+  group_by(spending_location) |>
+  summarize(total = sum(amount, na.rm = TRUE)) |>
+  arrange(desc(total))
+```
+
+**Q6.** Choose your own adventure: using either the UMD courses or campaign expenses data, ask and answer a question that is different than the previous ones. You can use one of the ones you provided in the pre_lab. **A6. How many UMD courses have 0 seats and no instructor? What percent of UMD's courseload is that?** **17.48%**
 
 ```{r}
+# course_confusion <- umd_courses |> filter (is.na(instructors) & (seats == 0))
+# saving as comment because this creates a dataframe, when I really need an integer in order to divide. I think this means I need to actually add a column to the set I'm already working in.
+# I'm learning you can't filter within mutate. I guess that makes sense because I need a number in order to divide. 
+# course_umd <- read_csv("data/umd_courses.rds") This isn't working for this because I want to count the NAs. Back to the drawing board. 
+# Okay, I can't use mutate either. It doesn't really make sense to add a column when this is a calculation. That's also why I can't use filter.
+
+umd_course_summary <- umd_courses |>
+  summarise(
+    course_confusion = sum (is.na(instructors) & (seats == 0)),
+    total_courses = sum (!is.na(id)),
+    pct_confusion = (course_confusion / total_courses) *100
+  )
+
+
+#AH! I think I got it. Last thing to remember is that negate doesn't work within sum. You have to use the exclamation or na.rm.
 ```

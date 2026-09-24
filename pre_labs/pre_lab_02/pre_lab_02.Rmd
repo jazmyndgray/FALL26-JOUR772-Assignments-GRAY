@@ -384,4 +384,4 @@ Now that you have seen how to use mutate, filtering and dates, give me three que
 
 2.  What is the most common purpose for payments made within Maryland? What committee tends to make these payments?
 
-3.  What was each instructor in the CMNS department's average courseload last semester (or in the last semester have data for)?
+3.  What was each instructor in the CMNS department's average courseload last semester (or in the last semester we have data for)?
