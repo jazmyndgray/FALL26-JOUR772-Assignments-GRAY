@@ -150,5 +150,5 @@ umd_course_summary <- umd_courses |>
   )
 
 
-#AH! I think I got it. Last thing to remember is that negate doesn't work within sum. You have to use the exclamation or na.rm.
+#AH! I think I got it. Last thing to remember is that negate doesn't work within sum. You have to use the exclamation.
 ```
