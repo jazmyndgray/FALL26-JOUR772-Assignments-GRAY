@@ -34,11 +34,12 @@ maryland_expenses <- read_csv("data/maryland_expenses.csv")
 
 **Q1.** How many departments have offered the courses with "Climate" in the title and at least one seat? Which department has offered the most?
 
-**A1. 305 departments offered courses with "Climate" in the title. The Atmospheric & Oceanic Science department offered the most. .**
+**A1. 32 departments offered courses with "Climate" in the title. The Atmospheric & Oceanic Science department offered the most. .**
 
 ```{r}
+#CORRECTION. My submitted version said 305 departments, but it should be 32. Apologies for my typo. I didn't update the answer when I corrected my code.
 
-and_climate_1 <-umd_courses |> filter (str_detect(title, "Climate") & (seats >=1))
+and_climate_1 <-umd_courses |> filter (str_detect(title, "Climate") & (seats >=1)) 
 
 and_climate_1 |> 
 group_by(department) |>
@@ -111,6 +112,7 @@ moore_payments |>
   summarise(total_amount = sum(amount)) |>
   arrange(desc(total_amount))
 
+#Oh, I didn't really do this in order
 ```
 
 **Q5.** Using case_when(), create a column in the Maryland expenses data called `spending_location` indicating whether each record spent money in Maryland or outside Maryland. For records that are in Maryland, make the new column's value "In-state" and for all others, make it "Out of state". Then write code that shows the total amount of money spent in each category and describe the results. You can do this in one statement or break it up into two statements (saving the new column to your dataframe). **A5 This was tricky because the out-of-state spending returned NAs for the total. I looked up how to omit those empty responses and received an answer. Hopefully I did that right.**
@@ -119,8 +121,8 @@ moore_payments |>
 maryland_expenses_spending_location <-maryland_expenses |>
   mutate(
     spending_location = case_when(
-      str_detect(address, " Maryland ") ~ "In-state",
-      str_detect(address, " Maryland ", negate = TRUE) ~ "Out of state",
+      str_detect(address, " Maryland") ~ "In-state",
+      str_detect(address, " Maryland", negate = TRUE) ~ "Out of state",
       .default = NA
     )
   )
