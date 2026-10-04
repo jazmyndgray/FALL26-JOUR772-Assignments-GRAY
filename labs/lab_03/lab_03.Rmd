@@ -77,7 +77,7 @@ pg_schools <- cleaned_payments |>
 
 Q2: Using that `pg_schools` dataframe, write code to calculate the total amount of payments to the Prince George's County School system for each fiscal year. Which fiscal year had the largest total amount? Are there any aspects of the results that stand out to you?
 
-A2: 2024 had the largest total amount of payments. I'm not surprised by this amount.
+A2: 2024 had the largest total amount of payments. After that, in 2025, the funding decreased significantly. I find that interesting.
 
 ```{r}
 pg_schools |>
@@ -90,7 +90,7 @@ Q3. You're interested in examining the vendors paid for capital projects at the 
 
 Look carefully at that list - what cleaning will it require to ensure that you have only one row per vendor and zip code? Provide at least three examples of vendor names that are similar and should be combined into one. Describe in words how you might clean that data so that any nearly identical vendors would look identical - what would you change and how?
 
-A3. I would consider combining A MORTON THOMAS & ASSOC INC at 20852, AEROSOL MONITORING & ANALYSIS INC at 21076, and AMERICAN DESIGN ASSOCIATE at 21204. I began cleaning this up below. Then, I stopped because I realized I didn't need to do that much. In short, though, i would clean it using distinct, case_when, and an & operator. I would also want to confirm that they actually are the same companies. Reporters don't assume, so it may take some independent reporting to actually clean the dataframe.
+A3. I would consider combining A MORTON THOMAS & ASSOC INC at 20852, AEROSOL MONITORING & ANALYSIS INC at 21076, and AMERICAN DESIGN ASSOCIATE at 21204. I began cleaning this up below. Then, I stopped because I realized I didn't need to do that much. In short, though, I would clean it using distinct, case_when, and an & operator. I would also want to confirm that they actually are the same companies. Reporters don't assume, so it may take some independent reporting to actually clean the dataframe.
 
 ```{r}
 umd_payments <- cleaned_payments |>
@@ -124,7 +124,7 @@ cleaned_grants_loans |>
 
 Q5: Using the Maryland grants and loan data, find records where the zip code is the one where the University of Maryland-College Park is located in and produce a list of grantees from that zip code, along with the total amount they received. Write a paragraph explaining how many grantees are there, what you would need to do to clean the results so that you had one record per grantee and which grantees are most interesting to you?
 
-A5: There are 18 results for UMD's zip code. It looks like there could be some duplicates, including the "University of Maryland" and "University of Maryland College Park." Also, the Division of Research may be in here more than once. I think it would take some reporting to confirm whether that's true. I would start vy looking at the whole dataset again and use get_dupes(\_) to see if there were any matching records. Then, I would want to check the individual records to see if there were any obvious potnetial duplicates. After that I would look into potential aliases at the school-level. Does the Research Office have multiple names? Are there any repeat records or, rather than repeats, are there just separate records for the same grantee going by different names. After confirming aliases, I could look into changing the names using the distinct() function.
+A5: There are 18 results for UMD's zip code. It looks like there could be some duplicates, including the "University of Maryland" and "University of Maryland College Park." Also, the Division of Research may be in here more than once. I think it would take some reporting to confirm whether that's true. I think I would start by looking at the whole dataset again and use get_dupes(\_) to see if there were any matching records. Then, I would want to check the individual records to see if there were any obvious duplicates. After that I would look into potential aliases at the school-level. Does the Research Office have multiple names? Are there any repeat records or, rather than repeats, are there just separate records for the same grantee going by different names. After confirming aliases, I could look into changing the names using the distinct() function.
 
 ```{r}
 
