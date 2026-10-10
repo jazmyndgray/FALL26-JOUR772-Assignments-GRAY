@@ -180,14 +180,14 @@ mutate (serious = (case_when(
   arrange(amount)
 ```
 
-**A12**: You can run the functions from the last two questions. Then, create a new table and filter for serious earthquakes group those results by hour. You will see hour 6 had the fewest serious earthquakes, while hour 24 had the most. 
+**A12**: You can run the code from the last two questions. Then, create a new table and filter for serious earthquakes and group those results by hour. You will see hour 6 had the fewest serious earthquakes, while hour 24 had the most. 
 
 ------------------------------------------------------------------------
 
 #### EXTRA Q What other questions are you interested in and how would you ask them in R?
 
-1. I'm currently interested in knowing how many earthquakes had a magnitude grater than 3. This will allow me to check my work on the last question.
-2. I'm going to check my work on the last question by counting how many serious earthquakes were returned by my code in the last question.
+1. I'm currently interested in knowing how many earthquakes had a magnitude greater than 3. This will allow me to check my work on the last question.
+2. I'm going to check my work on the last question by counting how many serious earthquakes were returned by my code.
 3. I want to know more about the earthquakes that just happened in Panama. What is the average magnitude for an earthquake in Panama over the last 30 days?
 
 ```{r}
