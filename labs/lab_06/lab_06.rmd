@@ -94,12 +94,12 @@ cecil_carroll_allegany_location_county <- cecil_carroll_allegany |>
 
 Q3. Let's turn to the Baltimore City data. You're interested in exploring calls in zip codes with a high percentage of children under 18. Write code to isolate calls in zip codes where the percentage of under 18 population is at least 75% and then show the zip code and population and how many calls occurred in each of those zip codes.
 
-Where are those zip codes in the city? 2127
+Where are those zip codes in the city? 2127 had the highest rate.
 
 ```{r}
 baltimore_under_18_pct <-
 baltimore_zcta |>
-  filter(pct_under_18 > 75) |>
+  filter(pct_under_18 >= 75) |>
   group_by(zip_code, neighborhood) |>
   summarize(total_calls=n(), pop=mean(population)) |>
   arrange(desc(total_calls)) |>
