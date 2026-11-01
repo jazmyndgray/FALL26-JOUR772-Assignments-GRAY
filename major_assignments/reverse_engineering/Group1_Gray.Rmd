@@ -47,12 +47,13 @@ private_enrollment <- read.csv("data/private-enrollment-by-grade.csv") |> clean_
 
 # Clean required data and prepare for analysis if needed. 
 
-clean_public_enrollment <- public_enrollment |> rename(state_ab = st, public_enrollment = enrollment)
+clean_public_enrollment <- public_enrollment |> rename(state_ab = "st", public_enrollment = "enrollment")
 
 clean_private_enrollment <- private_enrollment |> 
-  rename( private_enrollment = enrollment, state_ab = state)
+  rename( private_enrollment = "enrollment", state_ab = "state")
 
-school_story <- clean_public_enrollment |> full_join(clean_private_enrollment, join_by(fips, sch_year, grade, state_ab))
+school_story <- clean_public_enrollment |> full_join(clean_private_enrollment, join_by(fips, sch_year, grade, state_ab)) |>
+  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12))
   
 
 ```
@@ -64,42 +65,75 @@ In this notebook, we are reverse engineering five sentences from the story.
 
 * **Sentence text**:  “The population of school-age kids in the states we studied fell by about 183,000, according to census estimates.” 
 
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Analysis summary**: Our results confirmed the AP's claim that the population of school-age kids in the 22 states studied fell by about 183,000. We found this number by comparing the provided age and population data from July 2020 to the age and population data we have from July 2021. 
 
 
 ```{r}
 # Put code to reverse engineer sentence here
-states_age_pop <- age_pop |>
-  mutate(year=year(est_date)) |>
+twenty_age_pop <- age_pop |>
+  mutate(year=year(est_date), month = month(est_date)) |>
+  filter(year == 2020 & month == 4) |>
  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
-  group_by(year, state) |>
-  summarize(total=sum(population))
+  group_by(state) |>
+  summarize(total_pop_20=sum(population))
 
-change <- states_age_pop |>
-  pivot_wider(names_from = year, values_from = total) |>
-  rename(twenty="2020", twenty_one="2021") |>
-  mutate(change = twenty_one - twenty ) |>
-  mutate(total_change=sum(change)) |>
-  arrange(desc(change))
+twenty_one_age_pop <- age_pop |>
+  mutate(year=year(est_date), month = month(est_date)) |>
+  filter(year == 2021 & month ==7) |>
+ filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
+  group_by(state) |>
+  summarize(total_pop_21=sum(population))
+
+#change <- states_age_pop |>
+ # pivot_wider(names_from = year, values_from = total) |>
+ # rename(twenty="2020", twenty_one="2021") |>
+ # mutate(change = twenty_one - twenty ) |>
+ # mutate(total_change=sum(change)) |>
+ # arrange(desc(change))
   
 
-twenty_age_pop<- age_pop |>   mutate(year=year(est_date)) |>
-  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12) & (year == 2020)) |> group_by(year) |> summarize(total=sum(population))
+# twenty_age_pop<- age_pop |>   mutate(year=year(est_date)) |>
+ # filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12) & (year == 2020)) |> group_by(year) |> summarize(total=sum(population))
 
-twenty_one_age_pop<- age_pop |>   mutate(year=year(est_date)) |>
-  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12) & (year == 2021)) |> group_by(year) |> summarize(total=sum(population))
+# twenty_one_age_pop<- age_pop |>   mutate(year=year(est_date)) |>
+ # filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12) & (year == 2021)) |> group_by(year) |> summarize(total=sum(population))
+
+combo_age_year_change <- twenty_one_age_pop |>
+  left_join(twenty_age_pop, join_by(state)) |>
+  mutate(change = total_pop_20 - total_pop_21) |>
+  summarize(total_change = sum(change))
 
 # Display results of code below this codeblock
 
+combo_age_year_change
 ```
 
 ### Sentence 2
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: "Those states saw private-school enrollment grow by over 100,000 students."
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
 # Put code to reverse engineer sentence here
+
+# private_2020 <- private_enrollment |>
+ # filter(sch_year == "2019-2020") |>
+ #  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
+ # group_by(fips) |>
+ # summarize(enrollment_total = sum(enrollment))
+
+
+
+
+
+private_enrollment_change <- private_enrollment |>
+  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
+  filter(str_detect(grade, "total")) |>
+  filter(sch_year == "2019-2020" | sch_year == "2021-2022") |>
+  group_by(sch_year) |>
+ summarize(total_enrollment = sum(enrollment))
+
+  2435878-2332860
 
 # Display results of code below this codeblock
 
