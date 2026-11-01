@@ -107,7 +107,7 @@ moco_calls_with_acs <- calls_moco_zip |> left_join(md_zipcodes_18, by=c('zip' = 
 
 **Q4** Using [CensusReporter.org](https://censusreporter.org/), examine the zip codes with the highest and lowest rates and compare and contrast their demographic profiles. Is there a story here?
 
-**A4** I'm not quite sure yet. I do think it's interesting that the community with the greatest number of calls per capita is a predominantly Hispanic neighborhood, while the lowest number of calls come from a predominantly Black neighborhood. Both of these ZCTAs have significant foreign-born populations, doubling the U.S. and Maryland average, though only 20877 also doubles the DMV's average. I think more reporting would help us to find out why these numbers are so drastically different. 
+**A4** I'm not quite sure yet. I do think it's interesting that the community with the greatest number of calls per capita is a predominantly Hispanic neighborhood, while the lowest number of calls come from a predominantly Black neighborhood. Both of these ZCTAs have significant foreign-born populations, doubling the U.S. and Maryland average, though only 20877 also doubles the DMV's average. Per capita income is also quite different. I think more reporting would help us to find out what's driving the difference. 
 
 **Q5** Go back to your joined dataframe from Q3 and add two more columns representing the minimum and maximum populations based on the estimate and margin of error, then calculate per capita rates for each. Do you get the same two zip codes for the highest and lowest as you did before? Does that give you more or less confidence in your answers to Q3?
 
