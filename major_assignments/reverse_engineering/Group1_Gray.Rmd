@@ -111,7 +111,7 @@ combo_age_year_change
 ### Sentence 2
 
 * **Sentence text**: "Those states saw private-school enrollment grow by over 100,000 students."
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Analysis summary**: Our results confirmed the AP’s claim that private school enrollment in the 22 states studied grew by over 100,000 students. The AP article also states that private school enrollment grew by “about 103,000 students.” We found this number by comparing total private school enrollment in the 22 states studied between the 2019-2020 and the 2021-2022 school years. This gives us a difference of 102,847 which explains both sentences where this number is referenced in the AP’s story. 
 
 ```{r}
 # Put code to reverse engineer sentence here
@@ -128,12 +128,12 @@ combo_age_year_change
 
 private_enrollment_change <- private_enrollment |>
   filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
-  filter(str_detect(grade, "total")) |>
+  filter(str_detect(grade, "k_12_total")) |>
   filter(sch_year == "2019-2020" | sch_year == "2021-2022") |>
   group_by(sch_year) |>
  summarize(total_enrollment = sum(enrollment))
 
-  2435878-2332860
+ 2435491-2332644
 
 # Display results of code below this codeblock
 
@@ -141,35 +141,88 @@ private_enrollment_change <- private_enrollment |>
 
 ### Sentence 3
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: “In the 21 states where data was available, enrollment fell by about 700,000 students between the 2019-2020 and 2021-2022 school years.” 
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
 # Put code to reverse engineer sentence here
 
+public_enrollment_change <- public_enrollment |>
+  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
+  filter(str_detect(grade, "k_12_total")) |>
+  filter(sch_year == "2019-2020" | sch_year == "2021-2022") |>
+  group_by(sch_year) |>
+ summarize(total_enrollment = sum(enrollment))
+
 # Display results of code below this codeblock
+
+24081631-24786224
 
 ```
 
 ### Sentence 4
 
-* **Sentence text**: [Paste in sentence to engineer here]
-* **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
+* **Sentence text**: “An analysis by The Associated Press, Stanford University’s Big Local News project and Stanford education professor Thomas Dee found an estimated 230,000 students in 21 states whose absences could not be accounted for. These students didn’t move out of state, and they didn’t sign up for private school or home-school, according to publicly available data.”
+* **Analysis summary**: Here, we are finding the 230,000 unaccounted for students the AP described. We then used the available enrollment changes data to find homeschool enrollment growing by over 180,000, which is mentioned in the article. Subtracting the enrollment changes from homeschool, private, and public while also accounting for the drop in population left us with 234,213, which is very close to the number of unaccounted students mentioned in the article.
 
 ```{r}
 # Put code to reverse engineer sentence here
+enrollment_changes <- read_csv("~/Desktop/JOUR/GitHub/FALL26-JOUR772-Assignments-GRAY/major_assignments/reverse_engineering/data/enrollment-changes.csv") |>
+  clean_names()
+
+homeschool_enrollment <- enrollment_changes |>
+   filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
+    filter(enrollment_type=="Homeschool enrollment") |>
+    select(fips, state_abbrev, total_change) |>
+  summarize(total_enrollment=sum(total_change))
+  
 
 # Display results of code below this codeblock
+
+homeschool_enrollment
 
 ```
 
 ### Sentence 5
 
-* **Sentence text**: [Paste in sentence to engineer here]
+* **Sentence text**: “States where kindergarten is optional were more likely to have larger numbers of unaccounted-for students, suggesting the missing also include many young learners kept home instead of starting school.”
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
 # Put code to reverse engineer sentence here
+
+missing_kids_analysis <- read_csv("~/Desktop/JOUR/GitHub/FALL26-JOUR772-Assignments-GRAY/major_assignments/reverse_engineering/data/missing_kids_analysis.csv") |> clean_names() |>   mutate(kindergarten_required = if_else(state_abbrev == "MA", "No", kindergarten_required))
+
+ #missing_kids_analysis |> 
+  #group_by(kindergarten_required) |>
+  # summarize(total_changes=sum(residual_d_e_f_g)) |>
+  # arrange(desc(total_changes))
+
+ # states_kindergarten <- missing_kids_analysis |> 
+ # group_by(kindergarten_required) |>
+# summarize(count=n()) 
+
+kindergarten_missing_kids <- missing_kids_analysis |> 
+  mutate(kids_loss = case_when(
+    str_detect(residual_d_e_f_g, "-") ~ "YES",
+    .default = "NO")) 
+  
+  
+  
+
+kindergarten_missing_kids |> 
+  group_by(kindergarten_required) |>
+  summarize(
+    total_school_count  = n(),
+    schools_with_kids_loss = sum(kids_loss == "YES", na.rm = TRUE),
+    probability_kids_loss = schools_with_kids_loss / total_school_count
+  ) |> 
+  arrange(desc(probability_kids_loss)) 
+
+#missing_kids_analysis |>
+#  group_by(kindergarten_required) |>
+#  mutate(avg_drop=residual_d_e_f_g/states_analyzed)
+
 
 # Display results of code below this codeblock
 
