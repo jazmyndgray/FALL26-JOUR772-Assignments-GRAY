@@ -49,7 +49,7 @@ pgco_911_calls <- read_csv("~/Desktop/JOUR/GitHub/FALL26-JOUR772-Assignments-GRA
 
 Compare the results here to those from the pre_lab_08 bar chart - are there major differences in the months with the highest and lowest figures? Describe that below.
 
-**A1.** Yes, the pre-lab data pointed to summer months having the highest amount of overdose calls. While many of the summer months are still ranking highly in this dataset, December is also among the highest. This could mean that holidays also correlate with high 911 call numbers. 
+**A1.** Yes, the pre-lab data pointed to summer months having the highest amount of overdose calls. While many of the summer months are still ranking (somewhat) highly in this dataset, December is also among the highest. This could mean that holidays also correlate with high 911 call numbers. 
 
 ```{r}
 pgco_911_calls_by_month <- pgco_911_calls |>
@@ -57,15 +57,19 @@ pgco_911_calls_by_month <- pgco_911_calls |>
   summarize(total_calls = n()) |> 
   arrange(desc(total_calls))
 
-pgco_911_calls_by_month |>
+#Oops, I totally skipped the pct calculation when I first did this
+pgco_911_calls_by_month_pct <- pgco_911_calls_by_month |> mutate(pct = total_calls/1397 * 100) |>  arrange(desc(pct))
+
+
+pgco_911_calls_by_month_pct |>
   ggplot() +
-  geom_bar(aes(x=reorder(month,total_calls), weight=total_calls)) +
+  geom_bar(aes(x=reorder(month,pct), weight=pct)) +
   coord_flip() + 
   theme_classic()  +
   labs(
-    title="Most PG County 911 Calls Occur in December, Other Holiay Months",
+    title="December, Other Holiday Months, lead PG County in 911 Overdose Calls",
     x = "month",
-    y = "total calls",
+    y = "percentage of total calls in 2022",
     caption = "source: Prince George's County EMS"
     
   )
