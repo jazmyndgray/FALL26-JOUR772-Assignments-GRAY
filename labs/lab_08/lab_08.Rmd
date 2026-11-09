@@ -49,7 +49,7 @@ pgco_911_calls <- read_csv("~/Desktop/JOUR/GitHub/FALL26-JOUR772-Assignments-GRA
 
 Compare the results here to those from the pre_lab_08 bar chart - are there major differences in the months with the highest and lowest figures? Describe that below.
 
-**A1.**
+**A1.** Yes, the pre-lab data pointed to summer months having the highest amount of overdose calls. While many of the summer months are still ranking highly in this dataset, December is also among the highest. This could mean that holidays also correlate with high 911 call numbers. 
 
 ```{r}
 pgco_911_calls_by_month <- pgco_911_calls |>
@@ -124,7 +124,7 @@ To answer this question, do the following:
 6.  Add a label for each point that shows the zip code using geom_text() - see some examples of its use at <https://ggplot2.tidyverse.org/reference/geom_text.html#ref-examples>. Try to make the names as easy to read as possible by avoiding overlap.
 7.  In the answer space below, describe what you see and answer the questions posed above. In a general sense, what do you think this means? Feel free to consider the actual raw values: how would you report out the main point(s) of this chart?
 
-**A3.**
+**A3.** It looks like there may be some correlation between median income and overdose 911 calls in a zip code, meaning there are more overdose calls occurring in lower income zip codes. 
 
 ```{r}
 pgco_911_call_by_zip_code <- pgco_911_calls |>
