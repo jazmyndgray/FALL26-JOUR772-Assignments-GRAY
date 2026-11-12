@@ -74,38 +74,27 @@ twenty_age_pop <- age_pop |>
   mutate(year=year(est_date), month = month(est_date)) |>
   filter(year == 2020 & month == 4) |>
  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
-  group_by(state) |>
+  group_by(state, fips) |>
   summarize(total_pop_20=sum(population))
 
 twenty_one_age_pop <- age_pop |>
   mutate(year=year(est_date), month = month(est_date)) |>
   filter(year == 2021 & month ==7) |>
  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
-  group_by(state) |>
+  group_by(state, fips) |>
   summarize(total_pop_21=sum(population))
 
-#change <- states_age_pop |>
- # pivot_wider(names_from = year, values_from = total) |>
- # rename(twenty="2020", twenty_one="2021") |>
- # mutate(change = twenty_one - twenty ) |>
- # mutate(total_change=sum(change)) |>
- # arrange(desc(change))
-  
-
-# twenty_age_pop<- age_pop |>   mutate(year=year(est_date)) |>
- # filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12) & (year == 2020)) |> group_by(year) |> summarize(total=sum(population))
-
-# twenty_one_age_pop<- age_pop |>   mutate(year=year(est_date)) |>
- # filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12) & (year == 2021)) |> group_by(year) |> summarize(total=sum(population))
 
 combo_age_year_change <- twenty_one_age_pop |>
-  left_join(twenty_age_pop, join_by(state)) |>
+  left_join(twenty_age_pop, join_by(state, fips)) |>
   mutate(change = total_pop_20 - total_pop_21) |>
-  summarize(total_change = sum(change))
+  summarize(state_change = sum(change))
 
 # Display results of code below this codeblock
 
-combo_age_year_change
+combo_age_year_change_question_1 <- combo_age_year_change |> summarize(total_change = sum(state_change))
+
+combo_age_year_change_question_1
 ```
 
 ### Sentence 2
@@ -116,27 +105,27 @@ combo_age_year_change
 ```{r}
 # Put code to reverse engineer sentence here
 
-# private_2020 <- private_enrollment |>
- # filter(sch_year == "2019-2020") |>
- #  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
- # group_by(fips) |>
- # summarize(enrollment_total = sum(enrollment))
 
+twenty_private_enrollment <- clean_private_enrollment |>
+  filter(sch_year == "2019-2020") |>
+ filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |> filter(str_detect(grade, "k_12_total")) |>
+  rename("private_2020" = private_enrollment) |>
+  select(fips, state_ab, private_2020)
 
+twenty_one_private_enrollment <- clean_private_enrollment |>
+  filter(sch_year == "2021-2022") |>
+ filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |> filter(str_detect(grade, "k_12_total")) |>
+  rename("private_2021" = private_enrollment) |>
+  select(fips, state_ab, private_2021)
 
+#Create private enrollment set
+private_enrollment_changes <- twenty_private_enrollment |> left_join(twenty_one_private_enrollment, join_by(fips, state_ab)) |> mutate(private_change = private_2021 - private_2020) |> select(fips, state_ab, private_change) 
 
-
-private_enrollment_change <- private_enrollment |>
-  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
-  filter(str_detect(grade, "k_12_total")) |>
-  filter(sch_year == "2019-2020" | sch_year == "2021-2022") |>
-  group_by(sch_year) |>
- summarize(total_enrollment = sum(enrollment))
-
- 2435491-2332644
 
 # Display results of code below this codeblock
+private_enrollment_changes_question_2 <- private_enrollment_changes |> summarize(total_change = sum(private_change))
 
+private_enrollment_changes_question_2
 ```
 
 ### Sentence 3
@@ -147,16 +136,30 @@ private_enrollment_change <- private_enrollment |>
 ```{r}
 # Put code to reverse engineer sentence here
 
-public_enrollment_change <- public_enrollment |>
+
+twenty_public_enrollment <- clean_public_enrollment |>
+    filter(sch_year == "2019-2020") |>
+    filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
+    filter(str_detect(grade, "k_12_total")) |>
+    rename("public_2020" = public_enrollment) |>
+    select(fips, state, state_ab, public_2020)
+
+twenty_one_public_enrollment <- clean_public_enrollment|>
+  filter(sch_year == "2021-2022") |>
   filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
   filter(str_detect(grade, "k_12_total")) |>
-  filter(sch_year == "2019-2020" | sch_year == "2021-2022") |>
-  group_by(sch_year) |>
- summarize(total_enrollment = sum(enrollment))
+  rename("public_2021" = public_enrollment) |>
+  select(fips, state, state_ab, public_2021)
+
+public_enrollment_changes <- twenty_public_enrollment |> left_join(twenty_one_public_enrollment, join_by(fips, state_ab)) |> filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |> mutate(public_change = public_2021 - public_2020) |> select(fips, state_ab, public_change) 
+
+
 
 # Display results of code below this codeblock
 
-24081631-24786224
+public_enrollment_changes_question_3 <- public_enrollment_changes |> summarize(total_change = sum(public_change))
+
+public_enrollment_changes_question_3
 
 ```
 
@@ -175,6 +178,9 @@ homeschool_enrollment <- enrollment_changes |>
     filter(enrollment_type=="Homeschool enrollment") |>
     select(fips, state_abbrev, total_change) |>
   summarize(total_enrollment=sum(total_change))
+
+#184,047 is the exact number in the AP's ReadMe
+#The residual is (-704,593 + 102,847 + 184,047) - -183,486 = -234,213 (exact same as the AP)
   
 
 # Display results of code below this codeblock
@@ -189,65 +195,59 @@ homeschool_enrollment
 * **Analysis summary**: [Write up two to three sentences describing the results of your analysis.  Were you able to confirm the finding? If not, why not?]
 
 ```{r}
-# Put code to reverse engineer sentence here
 
-# missing_kids_analysis <- read_csv("~/Desktop/JOUR/GitHub/FALL26-JOUR772-Assignments-GRAY/major_assignments/reverse_engineering/data/missing_kids_analysis.csv") |> clean_names() |>   mutate(kindergarten_required = if_else(state_abbrev == "MA", "No", kindergarten_required))
-
- #missing_kids_count <- missing_kids_analysis |> 
- # group_by(kindergarten_required) |>
-  # summarize(total_changes=sum(residual_d_e_f_g)) |>
-  # arrange(desc(total_changes))
-
-#Prepare public & private enrollment datasets
-twenty_public_enrollment <- clean_public_enrollment |>
-    filter(sch_year == "2019-2020") |>
-    filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
-    filter(str_detect(grade, "k_12_total")) |>
-    rename("public_2020" = public_enrollment) |>
-    select(fips, state, state_ab, public_2020)
-
-twenty_one_public_enrollment <- clean_public_enrollment|>
-  filter(sch_year == "2021-2022") |>
-  filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
-  filter(str_detect(grade, "k_12_total")) |>
-  rename("public_2021" = public_enrollment) |>
-  select(fips, state, state_ab, public_2021)
-
-twenty_private_enrollment <- clean_private_enrollment |>
-  filter(sch_year == "2019-2020") |>
- filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |> filter(str_detect(grade, "k_12_total")) |>
-  rename("private_2020" = private_enrollment) |>
-  select(fips, state_ab, private_2020)
-
-twenty_one_private_enrollment <- clean_private_enrollment |>
-  filter(sch_year == "2021-2022") |>
- filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |> filter(str_detect(grade, "k_12_total")) |>
-  rename("private_2021" = private_enrollment) |>
-  select(fips, state_ab, private_2021)
-
-#Create Public enrollment set
-public_enrollment_changes <- twenty_public_enrollment |> left_join(twenty_one_public_enrollment, join_by(fips, state_ab)) |> mutate(public_change = public_2021 - public_2020) |> select(fips, state_ab, public_2020, public_2021, public_change) 
-
-#Create private enrollment set
-private_enrollment_changes <- twenty_private_enrollment |> left_join(twenty_one_private_enrollment, join_by(fips, state_ab)) |> mutate(private_change = private_2021 - private_2020) |> select(fips, state_ab, private_2020, private_2021, private_change) 
+missing_kids_analysis <- read_csv("~/Desktop/JOUR/GitHub/FALL26-JOUR772-Assignments-GRAY/major_assignments/reverse_engineering/data/missing_kids_analysis.csv") |> clean_names() |>   mutate(kindergarten_required = if_else(state_abbrev == "MA", "No", kindergarten_required))
 
 #Prepare homeschool dataset
 homeschool_enrollment_changes <- enrollment_changes |>
    filter(fips %in% c(6, 36, 22, 37, 53, 8, 13, 27, 55, 33, 25, 30, 10, 38, 11, 46, 45, 31, 44, 47, 42, 12)) |>
-    filter(enrollment_type=="Homeschool enrollment") |> select(fips, state_abbrev, school_year_2019_20, school_year_2021_22, total_change) |> clean_names() |> rename("state_ab" = state_abbrev, "homeschool_20" = school_year_2019_20, "homeschool_21" = school_year_2021_22, "homeschool_change" = total_change)
+    filter(enrollment_type=="Homeschool enrollment") |> 
+  select(fips, state_abbrev, school_year_2019_20, school_year_2021_22, total_change) |> 
+  clean_names() |> 
+  rename("state_ab" = state_abbrev, "homeschool_20" = school_year_2019_20, "homeschool_21" = school_year_2021_22, "homeschool_change" = total_change)
 
 #Grab needed columns from missing kids analysis
-missing_kids_analysis <- missing_kids_analysis |> select(fips, state_ab, kindergarten_required) 
+missing_kids_analysis <- missing_kids_analysis |> select(fips, state_abbrev, kindergarten_required) 
 
-#Creat big dataset
+age_group <- twenty_one_age_pop |>
+  left_join(twenty_age_pop, join_by(state, fips))|>
+  mutate(difference = total_pop_21-total_pop_20) |>
+  select(state, fips, total_pop_21, total_pop_20, difference)
+
+
+#Create big dataset
 kindergarten_missing_kids <- public_enrollment_changes |> 
   left_join(private_enrollment_changes, join_by(fips, state_ab)) |>
   left_join(homeschool_enrollment_changes, join_by(fips, state_ab)) |> 
-  left_join(missing_kids_analysis, join_by(fips, state_ab)) 
+  left_join(age_group, join_by(fips)) |>
+  left_join(missing_kids_analysis, join_by(fips, state_ab == state_abbrev)) |> 
+  #Add columns to calculate residuals based on changes in public, private, and homeschool data 
+  mutate(residual = ((private_change + public_change + homeschool_change) - difference)) |> arrange(residual)
 
-#Add columns to calculate residuals based on changes in public, private, and homeschool data 
+kindergarten_missing_kids |>
+  ggplot() + 
+  geom_text(aes(x=kindergarten_required, y=residual, label = state_ab)) +
+  theme_classic() + 
+  labs(
+    title="More Unaccounted-for Students in States Where Kindergarten Isn't Required",
+    x = "Whether Kindergarten is Required",
+    y = "Student Enrollment Change",
+    caption = "source: Associated Press"
+  ) 
 
-kindergarten_missing_kids |> mutate(residuals = (private_change + public_change + homeschool_change)) |> arrange(residuals)
+kindergarten_missing_kids |>
+  ggplot() +
+  geom_bar(aes(x=reorder(kindergarten_required,residual), weight=residual)) +
+  coord_flip() + 
+  theme_classic()  +
+  labs(
+    title="More Students Missing in States Where Kindergarten Isn't Required",
+    x = "Whether Kindergarten is Required",
+    y = "Student Enrollment Change",
+    caption = "source: Associated Press"
+  )
+
+
 
 # Display results of code below this codeblock
 
